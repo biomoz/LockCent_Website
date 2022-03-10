@@ -1,0 +1,10 @@
+body{
+    background-size: 100%;
+    background-color: black;
+    background-image: url("jason-leung.jpg");
+    color: white;
+}
+.whitecenterheader{
+    color: white;
+    text-align: center;
+}
