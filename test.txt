@@ -1,0 +1,13 @@
+	$stmtinsert = $db->prepare($sql);
+		$result = $stmtinsert->execute([$email, $username, $password]);
+		if($result){
+		echo 'Successfully saved.';
+		}else{
+		echo 'Failed.';
+		}
+
+        $string = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+		$ekey= substr(str_shuffle($string),0,25);
+		echo $ekey;
+
+xampp server needed apache and mysql
