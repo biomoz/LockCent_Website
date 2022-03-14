@@ -39,13 +39,21 @@ require_once('config.php');
 	<?php
 	if(isset($_POST['create'])){
 		
+		$string = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+		$ekey= substr(str_shuffle($string),0,25);
+
 		$email = $_POST['email'];
 		$username = $_POST['username'];
 		$password = $_POST['password'];
-		$sql ="INSERT INTO useraccounts_test (email, username, password ) VALUES(?,?,?)";
+		$sql ="INSERT INTO useraccounts_test (email, username, password, ekey ) VALUES(:email,:username,:password, :ekey)";
 
 		$stmtinsert = $db->prepare($sql);
-		$result = $stmtinsert->execute([$email, $username, $password]);
+		$stmtinsert->bindParam(':email', $email);
+		$stmtinsert->bindParam(':username', $username);
+		$stmtinsert->bindParam(':password', $password);
+		$stmtinsert->bindParam(':ekey', $ekey);
+		$result = $stmtinsert->execute();
+
 		if($result){
 		echo 'Successfully saved.';
 		}else{
@@ -53,7 +61,6 @@ require_once('config.php');
 		}
 
 		}
-
 	?>	
 </div>
 
