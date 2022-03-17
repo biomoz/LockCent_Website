@@ -38,38 +38,45 @@ require_once('config.php');
 <div>
 	<?php
 	if(isset($_POST['create'])){
-		$method = 'aes-256-cbc';
-		$string = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-		$ekey= substr(str_shuffle($string),0,25);
-		$enc_ekey = substr(hash('sha256', $ekey, true), 0, 32);
 
-		$iv = chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0);
+		if ($_POST['password'] === $_POST['re-password']) {
+			$method = 'aes-256-cbc';
+			$string = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+			$ekey= substr(str_shuffle($string),0,25);
+			$enc_ekey = substr(hash('sha256', $ekey, true), 0, 32);
 
-		$email = $_POST['email'];
-		$username = $_POST['username'];
-		$password = $_POST['password'];
+			$iv = chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0);
 
-		$enc_email = base64_encode(openssl_encrypt($email, $method, $enc_ekey, OPENSSL_RAW_DATA, $iv));
-		$dec_email = openssl_decrypt(base64_decode($enc_email), $method, $enc_ekey, OPENSSL_RAW_DATA, $iv);
+			$email = $_POST['email'];
+			$username = $_POST['username'];
+			$password = $_POST['password'];
 
-		$enc_pass = base64_encode(openssl_encrypt($password, $method, $enc_ekey, OPENSSL_RAW_DATA, $iv));
-		$dec_pass = openssl_decrypt(base64_decode($enc_pass), $method, $enc_ekey, OPENSSL_RAW_DATA, $iv);
+			$enc_email = base64_encode(openssl_encrypt($email, $method, $enc_ekey, OPENSSL_RAW_DATA, $iv));
+			$dec_email = openssl_decrypt(base64_decode($enc_email), $method, $enc_ekey, OPENSSL_RAW_DATA, $iv);
+
+			$enc_pass = base64_encode(openssl_encrypt($password, $method, $enc_ekey, OPENSSL_RAW_DATA, $iv));
+			$dec_pass = openssl_decrypt(base64_decode($enc_pass), $method, $enc_ekey, OPENSSL_RAW_DATA, $iv);
 		
-		$sql ="INSERT INTO useraccounts_test (email, username, password, ekey ) VALUES(:email,:username,:password, :ekey)";	
+			$sql ="INSERT INTO useraccounts_test (email, username, password, ekey ) VALUES(:email,:username,:password, :ekey)";	
 
-		$stmtinsert = $db->prepare($sql);
-		$stmtinsert->bindParam(':email', $enc_email);
-		$stmtinsert->bindParam(':username', $username);
-		$stmtinsert->bindParam(':password', $enc_pass);
-		$stmtinsert->bindParam(':ekey', $ekey);
-		$result = $stmtinsert->execute();
+			$stmtinsert = $db->prepare($sql);
+			$stmtinsert->bindParam(':email', $enc_email);
+			$stmtinsert->bindParam(':username', $username);
+			$stmtinsert->bindParam(':password', $enc_pass);
+			$stmtinsert->bindParam(':ekey', $ekey);
+			$result = $stmtinsert->execute();
 
-		if($result){
-		echo 'Successfully saved.';
-		}else{
-		echo 'Failed.';
-		}
+			if($result){
+			echo 'Successfully saved.';
+			}else{
+			echo 'Failed.';
+			}
 
+		 }
+		 else {
+			echo "Failed. Password doesn't match.";
+		 }
+		
 		}
 	?>	
 </div>
@@ -91,6 +98,10 @@ require_once('config.php');
 
 					<label for="password"><b>Password</b></label>
 					<input class="form-control" id="password"  type="password" name="password" required>
+
+					<label for="password"><b>Confirm Password</b></label>
+					<input class="form-control" id="re-password"  type="password" name="re-password" required>
+
 					<hr class="mb-3">
 					<input class="btn btn-primary" type="submit" id="register" name="create" value="Sign Up">
 				</div>
