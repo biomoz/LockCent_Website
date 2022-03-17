@@ -42,7 +42,7 @@ require_once('config.php');
 		if ($_POST['password'] === $_POST['re-password']) {
 			$method = 'aes-256-cbc';
 			$string = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-			$ekey= substr(str_shuffle($string),0,25);
+			$ekey= substr(str_shuffle($string),0,32);
 			$enc_ekey = substr(hash('sha256', $ekey, true), 0, 32);
 
 			$iv = chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0);
@@ -63,7 +63,7 @@ require_once('config.php');
 			$stmtinsert->bindParam(':email', $enc_email);
 			$stmtinsert->bindParam(':username', $username);
 			$stmtinsert->bindParam(':password', $enc_pass);
-			$stmtinsert->bindParam(':ekey', $ekey);
+			$stmtinsert->bindParam(':ekey', $enc_ekey);
 			$result = $stmtinsert->execute();
 
 			if($result){
