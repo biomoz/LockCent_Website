@@ -57,23 +57,12 @@ require_once('config.php');
 		
 		$sql ="INSERT INTO useraccounts_test (email, username, password, ekey ) VALUES(:email,:username,:password, :ekey)";	
 
-		echo 'ekey=' . $ekey . "\n";
-		echo 'cipher=' . $method . "\n";
-		echo 'enc_email to: ' . $enc_email . "\n";
-		echo 'dec_email to: ' . $dec_email . "\n\n";
-		echo 'username to: ' . $username . "\n";
-		echo 'enc_pass to: ' . $enc_pass . "\n";
-		echo 'dec_pass to: ' . $dec_pass . "\n\n";
-
 		$stmtinsert = $db->prepare($sql);
 		$stmtinsert->bindParam(':email', $enc_email);
 		$stmtinsert->bindParam(':username', $username);
 		$stmtinsert->bindParam(':password', $enc_pass);
 		$stmtinsert->bindParam(':ekey', $ekey);
 		$result = $stmtinsert->execute();
-
-
-
 
 		if($result){
 		echo 'Successfully saved.';
