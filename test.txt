@@ -1,13 +1,105 @@
-	$stmtinsert = $db->prepare($sql);
-		$result = $stmtinsert->execute([$email, $username, $password]);
+without encryption:
+
+	$string = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+		$ekey= substr(str_shuffle($string),0,25);
+
+		$email = $_POST['email'];
+		$username = $_POST['username'];
+		$password = $_POST['password'];
+		$sql ="INSERT INTO useraccounts_test (email, username, password, ekey ) VALUES(:email,:username,:password, :ekey)";
+
+		$stmtinsert = $db->prepare($sql);
+		$stmtinsert->bindParam(':email', $email);
+		$stmtinsert->bindParam(':username', $username);
+		$stmtinsert->bindParam(':password', $password);
+		$stmtinsert->bindParam(':ekey', $ekey);
+		$result = $stmtinsert->execute();
+
 		if($result){
 		echo 'Successfully saved.';
 		}else{
 		echo 'Failed.';
 		}
 
-        $string = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-		$ekey= substr(str_shuffle($string),0,25);
-		echo $ekey;
+
+
 
 xampp server needed apache and mysql
+
+
+encryption update:
+
+	if(isset($_POST['create'])){
+		$method = 'aes-256-cbc';
+		$string = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+		$ekey= substr(str_shuffle($string),0,25);
+		$ekey = substr(hash('sha256', $ekey, true), 0, 32);
+
+		$iv = chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0);
+
+		$email = $_POST['email'];
+		$username = $_POST['username'];
+		$password = $_POST['password'];
+
+		$enc_email = base64_encode(openssl_encrypt($email, $method, $ekey, OPENSSL_RAW_DATA, $iv));
+		$dec_email = openssl_decrypt(base64_decode($enc_email), $method, $ekey, OPENSSL_RAW_DATA, $iv);
+
+		$enc_usr = base64_encode(openssl_encrypt($username, $method, $ekey, OPENSSL_RAW_DATA, $iv));
+		$dec_usr = openssl_decrypt(base64_decode($enc_usr), $method, $ekey, OPENSSL_RAW_DATA, $iv);
+
+		$enc_pass = base64_encode(openssl_encrypt($password, $method, $ekey, OPENSSL_RAW_DATA, $iv));
+		$dec_pass = openssl_decrypt(base64_decode($enc_pass), $method, $ekey, OPENSSL_RAW_DATA, $iv);
+		
+		$sql ="INSERT INTO useraccounts_test (email, username, password, ekey ) VALUES(:email,:username,:password, :ekey)";
+		
+		
+		echo 'ekey=' . $ekey . "\n";
+		echo 'cipher=' . $method . "\n";
+		echo 'enc_email to: ' . $enc_email . "\n";
+		echo 'dec_email to: ' . $dec_email . "\n\n";
+		echo 'enc_usr to: ' . $enc_usr . "\n";
+		echo 'dec_usr to: ' . $dec_usr . "\n\n";
+		echo 'enc_pass to: ' . $enc_pass . "\n";
+		echo 'dec_pass to: ' . $dec_pass . "\n\n";
+
+
+		$stmtinsert = $db->prepare($sql);
+		$stmtinsert->bindParam(':email', $enc_email);
+		$stmtinsert->bindParam(':username', $enc_usr);
+		$stmtinsert->bindParam(':password', $enc_pass);
+		$stmtinsert->bindParam(':ekey', $ekey);
+		$result = $stmtinsert->execute();
+
+		if($result){
+		echo 'Successfully saved.';
+		}else{
+		echo 'Failed.';
+		}
+
+		}
+
+encryption code:
+
+	<?php
+	$plaintext = 'My secret message 1234';
+	$password = '3sc3RLrpd17';
+	$method = 'aes-256-cbc';
+
+	// Must be exact 32 chars (256 bit)
+	$password = substr(hash('sha256', $password, true), 0, 32);
+	echo "Password:" . $password . "\n";
+
+	// IV must be exact 16 chars (128 bit)
+	$iv = chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0);
+
+	// av3DYGLkwBsErphcyYp+imUW4QKs19hUnFyyYcXwURU=
+	$encrypted = base64_encode(openssl_encrypt($plaintext, $method, $password, OPENSSL_RAW_DATA, $iv));
+
+	// My secret message 1234
+	$decrypted = openssl_decrypt(base64_decode($encrypted), $method, $password, OPENSSL_RAW_DATA, $iv);
+
+	echo 'plaintext=' . $plaintext . "\n";
+	echo 'cipher=' . $method . "\n";
+	echo 'encrypted to: ' . $encrypted . "\n";
+	echo 'decrypted to: ' . $decrypted . "\n\n";
+	?>

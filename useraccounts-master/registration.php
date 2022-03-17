@@ -38,19 +38,32 @@ require_once('config.php');
 <div>
 	<?php
 	if(isset($_POST['create'])){
-		
+		$method = 'aes-256-cbc';
 		$string = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 		$ekey= substr(str_shuffle($string),0,25);
+		$ekey = substr(hash('sha256', $ekey, true), 0, 32);
+
+		$iv = chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0);
 
 		$email = $_POST['email'];
 		$username = $_POST['username'];
 		$password = $_POST['password'];
-		$sql ="INSERT INTO useraccounts_test (email, username, password, ekey ) VALUES(:email,:username,:password, :ekey)";
+
+		$enc_email = base64_encode(openssl_encrypt($email, $method, $ekey, OPENSSL_RAW_DATA, $iv));
+		$dec_email = openssl_decrypt(base64_decode($enc_email), $method, $ekey, OPENSSL_RAW_DATA, $iv);
+
+		$enc_usr = base64_encode(openssl_encrypt($username, $method, $ekey, OPENSSL_RAW_DATA, $iv));
+		$dec_usr = openssl_decrypt(base64_decode($enc_usr), $method, $ekey, OPENSSL_RAW_DATA, $iv);
+
+		$enc_pass = base64_encode(openssl_encrypt($password, $method, $ekey, OPENSSL_RAW_DATA, $iv));
+		$dec_pass = openssl_decrypt(base64_decode($enc_pass), $method, $ekey, OPENSSL_RAW_DATA, $iv);
+		
+		$sql ="INSERT INTO useraccounts_test (email, username, password, ekey ) VALUES(:email,:username,:password, :ekey)";	
 
 		$stmtinsert = $db->prepare($sql);
-		$stmtinsert->bindParam(':email', $email);
-		$stmtinsert->bindParam(':username', $username);
-		$stmtinsert->bindParam(':password', $password);
+		$stmtinsert->bindParam(':email', $enc_email);
+		$stmtinsert->bindParam(':username', $enc_usr);
+		$stmtinsert->bindParam(':password', $enc_pass);
 		$stmtinsert->bindParam(':ekey', $ekey);
 		$result = $stmtinsert->execute();
 
