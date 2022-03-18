@@ -240,3 +240,87 @@ hashed password change:
 		 }
 		
 		}
+Feedback page php:(mercury needs to be open php.ini [mail] all ;)
+
+	   
+	<body style="min-width: 1200px; ">
+
+	<?php 
+	if(isset($_POST['send'])){
+		$to = "sup.lockcent@outlook.com"; // this is your Email address
+		$from = $_POST['email']; // this is the sender's Email address
+		$username = $_POST['username'];
+		$rating = $_POST['RadioOptions'];
+		$subject = "Form submission";
+		$subject2 = "Copy of your form submission";
+		$message = "Username: ". $username ."\n\nRating: " . $rating . "\n\nComments: " . "\n\n" . $_POST['Textarea'];
+		$message2 = "Here is a copy of your message " . $username . "\n\nRating: " . $rating . "\n\nComments: " . "\n\n" . $_POST['Textarea'];
+
+		$headers = "From:" . $from;
+		$headers2 = "From:" . $to;
+		$send =mail($to,$subject,$message,$headers);
+		
+		if ($send)
+		{
+			echo "Mail Sent. Thank you " . $username ;
+			$send2 =mail($from,$subject2,$message2,$headers2); // sends a copy of the message to the sender
+		}
+		else
+			echo "Error";
+		}
+	?>
+
+		<div style="max-height: 100%; max-width:80%; margin: 0 auto; padding: 10px; background-color: rgba(150, 147, 147, 0.5);">
+			<div class="container"> 
+				<br>  
+				<h1>Feedback:</h1>
+				<hr class="mb-3">
+				<form action="" method="post">
+					<div class="form-group">
+					<label for="email"><b>Email address</b></label>
+					<input type="email" class="form-control" id="email" name="email">
+					</div>
+					<br>
+					<div class="form-group">
+					<label for="username"><b>Username</b></label>
+					<input type="text" class="form-control" id="username" name="username">
+					</div>
+					<br>
+					<div class="form-group">
+					<label for="form-check form-check-inline"><b>How was your experience with our project?</b></label>
+					<br>
+					<div class="form-group">
+					<div class="form-check form-check-inline">
+						<input class="form-check-input" type="radio" name="RadioOptions" id="inlineRadio1" value="option1">
+						<label class="form-check-label" for="inlineRadio1">Very Bad</label>
+					</div>
+					<div class="form-check form-check-inline">
+						<input class="form-check-input" type="radio" name="RadioOptions" id="inlineRadio2" value="option2">
+						<label class="form-check-label" for="inlineRadio2">Bad</label>
+					</div>
+					<div class="form-check form-check-inline">
+						<input class="form-check-input" type="radio" name="RadioOptions" id="inlineRadio3" value="option3">
+						<label class="form-check-label" for="inlineRadio3">Average</label>
+					</div>
+					<div class="form-check form-check-inline">
+						<input class="form-check-input" type="radio" name="RadioOptions" id="inlineRadio4" value="option4">
+						<label class="form-check-label" for="inlineRadio4">Good</label>
+					</div>
+					<div class="form-check form-check-inline">
+						<input class="form-check-input" type="radio" name="RadioOptions" id="inlineRadio5" value="option5">
+						<label class="form-check-label" for="inlineRadio5">Very Good</label>
+					</div>
+					</div>
+					<br>
+					<div class="form-group">
+					<label for="Textarea1"><b>Comments:</b></label>
+					<textarea class="form-control" id="Textarea" name="Textarea" rows="5"></textarea>
+					</div>
+					
+					<hr class="mb-3">
+					<input class="btn btn-primary" type="submit" id="send" name="send" value="Send">
+				</form>
+			</div>
+		</div>
+
+

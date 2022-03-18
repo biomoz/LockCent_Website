@@ -16,7 +16,7 @@ require_once('config.php');
   </head>
   <nav class="navbar navbar-expand-lg navbar-light bg-light" >
     <div class="navbar-collapse" id="navbarTogglerDemo01">
-      <a class="navbar-brand" href="#">  <image src="../images/LockCent_w.png" alt="Logo" width="50px" class="px-lg-2"></image> LockCent</a>
+      <a class="navbar-brand" href="../LockCent.html">  <image src="../images/LockCent_w.png" alt="Logo" width="50px" class="px-lg-2"></image> LockCent</a>
       <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
         <li class="nav-item active">
           <a class="nav-link" href="../LockCent.html">Home </a>
@@ -27,6 +27,9 @@ require_once('config.php');
 		<li class="nav-item">
           <a class="nav-link" href="#">Register</a>
         </li>
+		<li class="nav-item">
+            <a class="nav-link" href="../Feedback.php">Feedback</a>
+          </li>
         <li class="nav-item">
           <a class="nav-link" href="../AboutUs.html">About Us</a>
         </li>
