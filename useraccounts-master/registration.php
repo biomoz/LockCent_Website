@@ -60,7 +60,7 @@ require_once('config.php');
 			$enc_pass = base64_encode(openssl_encrypt($password, $method, $enc_ekey, OPENSSL_RAW_DATA, $iv));
 			$dec_pass = openssl_decrypt(base64_decode($enc_pass), $method, $enc_ekey, OPENSSL_RAW_DATA, $iv);
 		
-			$sql ="INSERT INTO useraccounts_test (email, username, password, ekey ) VALUES(:email,:username,:password, :ekey)";	
+			$sql ="INSERT INTO user_accounts (email, username, password, ekey ) VALUES(:email,:username,:password, :ekey)";	
 
 			$stmtinsert = $db->prepare($sql);
 			$stmtinsert->bindParam(':email', $enc_email);
