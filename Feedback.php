@@ -10,9 +10,37 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
     <link href="Feedback.css"  rel="stylesheet">
   </head>
-  <nav class="navbar navbar-expand-lg navbar-light bg-light" >
-    <div class="navbar-collapse" id="navbarTogglerDemo01">
-      <a class="navbar-brand" href="LockCent.html">  <image src="images/LockCent_w.png" alt="Logo" width="50px" class="px-lg-2"></image> LockCent</a>
+ 
+    
+<body style="min-width: 1200px; ">
+
+  <?php 
+    if(isset($_POST['send'])){
+        $to = "sup.lockcent@outlook.com"; // this is your Email address
+        $from = $_POST['email']; // this is the sender's Email address
+        $username = $_POST['username'];
+        $rating = $_POST['RadioOptions'];
+        $subject = "Form submission";
+        $subject2 = "Copy of your form submission";
+        $message = "Username: ". $username ."\n\nRating: " . $rating . "\n\nComments: " . "\n\n" . $_POST['Textarea'];
+        $message2 = "Here is a copy of your message " . $username . "\n\nRating: " . $rating . "\n\nComments: " . "\n\n" . $_POST['Textarea'];
+
+        $headers = "From:" . $from;
+        $headers2 = "From:" . $to;
+        $send =mail($to,$subject,$message,$headers);
+        
+        if ($send)
+        {
+          echo "Mail Sent. Thank you " . $username ;
+          $send2 =mail($from,$subject2,$message2,$headers2); // sends a copy of the message to the sender
+        }
+        else
+          echo "Error";
+        }
+  ?>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light" >
+      <div class="navbar-collapse" id="navbarTogglerDemo01">
+      <a class="navbar-brand" href="LockCent.html">  <img src="images/LockCent_w.png" alt="Logo" width="50" class="px-lg-2"> LockCent</a>
       <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
         <li class="nav-item active">
           <a class="nav-link" href="LockCent.html">Home </a>
@@ -29,38 +57,11 @@
         <li class="nav-item">
           <a class="nav-link" href="AboutUs.html">About Us</a>
         </li>
+      </ul>
       </div>
-  </nav>
-    </div>
+    </nav>
     
     
-  <body style="min-width: 1200px; ">
-
-<?php 
-  if(isset($_POST['send'])){
-      $to = "sup.lockcent@outlook.com"; // this is your Email address
-      $from = $_POST['email']; // this is the sender's Email address
-      $username = $_POST['username'];
-      $rating = $_POST['RadioOptions'];
-      $subject = "Form submission";
-      $subject2 = "Copy of your form submission";
-      $message = "Username: ". $username ."\n\nRating: " . $rating . "\n\nComments: " . "\n\n" . $_POST['Textarea'];
-      $message2 = "Here is a copy of your message " . $username . "\n\nRating: " . $rating . "\n\nComments: " . "\n\n" . $_POST['Textarea'];
-
-      $headers = "From:" . $from;
-      $headers2 = "From:" . $to;
-      $send =mail($to,$subject,$message,$headers);
-      
-      if ($send)
-      {
-        echo "Mail Sent. Thank you " . $username ;
-        $send2 =mail($from,$subject2,$message2,$headers2); // sends a copy of the message to the sender
-      }
-      else
-        echo "Error";
-      }
-?>
-
     <div style="max-height: 100%; max-width:80%; margin: 0 auto; padding: 10px; background-color: rgba(150, 147, 147, 0.5);">
         <div class="container"> 
             <br>  
@@ -128,3 +129,4 @@
     
   </body>
 </html>
+
