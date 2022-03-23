@@ -2,23 +2,47 @@
 require_once('config.php');
 ?>
 <?php
+		if(isset($_POST['create'])){
 
-if(isset($_POST)){
+			if ($_POST['password'] === $_POST['re-password']) {
+				$method = 'aes-256-cbc';
+				$string = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+				$ekey= substr(str_shuffle($string),0,32);
+				$enc_ekey = substr(hash('sha256', $ekey, true), 0, 32);
 
-	$firstname 		= $_POST['firstname'];
-	$lastname 		= $_POST['lastname'];
-	$email 			= $_POST['email'];
-	$phonenumber	= $_POST['phonenumber'];
-	$password 		= sha1($_POST['password']);
+				$iv = chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0);
 
-		$sql = "INSERT INTO users (firstname, lastname, email, phonenumber, password ) VALUES(?,?,?,?,?)";
-		$stmtinsert = $db->prepare($sql);
-		$result = $stmtinsert->execute([$firstname, $lastname, $email, $phonenumber, $password]);
-		if($result){
-			echo 'Successfully saved.';
-		}else{
-			echo 'There were erros while saving the data.';
-		}
-}else{
-	echo 'No data';
-}
+				$email = $_POST['email'];
+				$username = $_POST['username'];
+				$password = $_POST['password'];
+
+				$enc_email = base64_encode(openssl_encrypt($email, $method, $enc_ekey, OPENSSL_RAW_DATA, $iv));
+				$dec_email = openssl_decrypt(base64_decode($enc_email), $method, $enc_ekey, OPENSSL_RAW_DATA, $iv);
+
+				$enc_pass = base64_encode(openssl_encrypt($password, $method, $enc_ekey, OPENSSL_RAW_DATA, $iv));
+				$dec_pass = openssl_decrypt(base64_decode($enc_pass), $method, $enc_ekey, OPENSSL_RAW_DATA, $iv);
+			
+				$sql ="INSERT INTO user_accounts (email, username, password, ekey ) VALUES(:email,:username,:password, :ekey)";	
+
+				$stmtinsert = $db->prepare($sql);
+				$stmtinsert->bindParam(':email', $enc_email);
+				$stmtinsert->bindParam(':username', $username);
+				$stmtinsert->bindParam(':password', $enc_pass);
+				$stmtinsert->bindParam(':ekey', $enc_ekey);
+				$result = $stmtinsert->execute();
+
+				if($result){
+				echo 'Successfully saved.';
+				}else{
+				echo 'Failed.';
+				}
+
+			}
+			else {
+				echo "Failed. Password doesn't match.";
+			}
+			
+			}else{
+				echo "No data";
+			}
+?>	

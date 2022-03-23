@@ -72,6 +72,9 @@ require_once('config.php');
 			<a class="nav-link" href="https://github.com/LynxarA-Coding/LockCent/releases">Download</a>
 			</li>
 			<li class="nav-item">
+			<a class="nav-link" href="login.php">Login</a>
+			</li>
+			<li class="nav-item">
 			<a class="nav-link" href="#">Register</a>
 			</li>
 			<li class="nav-item">
