@@ -3,7 +3,7 @@
 	session_start();
 	
 	if(isset($_SESSION['userlogin'])){
-		header("Location: index.php");
+		header("Location: ../user-page/index.php");
 	}
 
 
@@ -16,32 +16,83 @@
     <link href="../LockCent.css"  rel="stylesheet">
 </head>
 <body>
-<nav class="navbar navbar-expand-lg navbar-light bg-light" >
-		<div class="navbar-collapse" id="navbarTogglerDemo01">
-		<a class="navbar-brand" href="../LockCent.html">  <image src="../images/LockCent_w.png" alt="Logo" width="50px" class="px-lg-2"></image> LockCent</a>
-		<ul class="navbar-nav mr-auto mt-2 mt-lg-0">
-			<li class="nav-item active">
-			<a class="nav-link" href="../LockCent.html">Home </a>
-			</li>
-			<li class="nav-item">
-			<a class="nav-link" href="https://github.com/LynxarA-Coding/LockCent/releases">Download</a>
-			</li>
-			<li class="nav-item">
-			<a class="nav-link" href="#">Login</a>
-			</li>
-			<li class="nav-item">
-			<a class="nav-link" href="../useraccounts-master/registration.php">Register</a>
-			</li>
-			<li class="nav-item">
-				<a class="nav-link" href="../Feedback.php">Feedback</a>
-			</li>
-			<li class="nav-item">
-			<a class="nav-link" href="../AboutUs.html">About Us</a>
-			</li>
-		</ul>	
-		</div>
-	</nav>
-	<div style="height: 100%; max-width:80%; margin: 0 auto; padding: 10px; background-color: rgba(150, 147, 147, 0.5);">
+<nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+      <div class="container-fluid">
+     
+        <a class="navbar-brand me-auto ms-lg-0 ms-3 fw-bold" href="../LockCent.html">  <image src="../images/LockCent_w.png" alt="Logo" width="50px" class="px-lg-2"></image> LockCent</a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#topNavBar"
+          aria-controls="topNavBar"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="topNavBar">
+          <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+            <li class="nav-item">
+              <a class="nav-link ms-2">
+              </a>              
+            </li>
+            <li class="nav-item">
+              <a
+                class="nav-link ms-2"
+                href="../LockCent.html"
+                role="button"
+                aria-expanded="false"
+              >
+                Home
+              </a>              
+            </li>
+            <li class="nav-item">
+              <a
+                class="nav-link ms-2"
+                href="#"
+                role="button"
+                aria-expanded="false"
+              >
+              Login
+              </a>              
+            </li>
+            <li class="nav-item">
+              <a
+                class="nav-link ms-2"
+                href="registration.php"
+                role="button"
+                aria-expanded="false"
+              >
+              Register
+              </a>              
+            </li>
+            <li class="nav-item">
+              <a
+                class="nav-link ms-2"
+                href="https://github.com/LynxarA-Coding/LockCent/releases"
+                role="button"
+                aria-expanded="false"
+              >
+               Download
+              </a>              
+            </li>  
+            <li class="nav-item">
+              <a
+                class="nav-link ms-2"
+                href="../AboutUs.html"
+                role="button"
+                aria-expanded="false"
+              >
+              About Us
+              </a>              
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <div style="max-height: 100%; max-width:80%; margin: 0 auto; padding: 10px; background-color: rgba(150, 147, 147, 0.5);">
+      <br><br><br>
 		<form action="registration.php" method="post">
 			<div class="container">
 				
@@ -101,12 +152,12 @@
 				data:  {username: username, password: password},
 				success: function(data){
 					alert(data);
-					if($.trim(data) === "1"){
-						setTimeout(' window.location.href =  "index.php"', 1000);
+					if($.trim(data) === "Succesfull"){
+						setTimeout(' window.location.href =  "../user-page/index.php"', 10);
 					}
 				},
 				error: function(data){
-					alert('there were erros while doing the operation.');
+					alert('The username or password is incorrect');
 				}
 			});
 

@@ -1,3 +1,4 @@
+
 <?php 
 
 session_start();
@@ -13,8 +14,5 @@ session_start();
 	}
 
 ?>
-
-<p>Welcome to index</p>
-
 
 <a href="index.php?logout=true">Logout</a>
