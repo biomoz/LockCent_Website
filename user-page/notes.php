@@ -1,7 +1,7 @@
 <?php 
 
 session_start();
-
+require_once('../useraccounts-master/config.php');
 	if(!isset($_SESSION['userlogin'])){
 		header("Location: login.php");
 	}
@@ -11,6 +11,39 @@ session_start();
 		unset($_SESSION);
 		header("Location: ../useraccounts-master/login.php");
 	}
+  $username= $_SESSION['username'];
+  $sql = "SELECT username, ekey FROM user_accounts WHERE username='$username'";
+  $result = $db->query($sql);
+  
+  
+  if ($result->rowCount() > 0) {
+    // output data of each row
+    while($row = $result->fetch(PDO::FETCH_ASSOC)) {
+   
+    $enc_ekey= (binary)$row["ekey"];
+
+  
+    }
+  } else {
+    echo "0 results";
+  }
+
+  $sql = "SELECT username, notes FROM user_data WHERE username='$username'";
+  $result = $db->query($sql);
+  
+  if ($result->rowCount() > 0) {
+    // output data of each row
+    while($row = $result->fetch(PDO::FETCH_ASSOC)) {
+   
+    $notes = $row["notes"];
+    $method = 'aes-256-cbc';
+    $iv = chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0);
+    $dec_notes = openssl_decrypt(base64_decode($notes), $method, $enc_ekey, OPENSSL_RAW_DATA, $iv);
+    $succ=1;
+    }
+  } else {
+    $error = '0 results';
+  }
 
 ?>
 
@@ -78,7 +111,7 @@ session_start();
                 My Account
               </a>
               <ul class="dropdown-menu dropdown-menu-end">
-                <li><a class="dropdown-item" href="#">Settings</a></li>
+                <li><a class="dropdown-item" href="settings.php">Settings</a></li>
                 <li><a class="dropdown-item" href="index.php?logout=true">Logout</a></li>
                 <li>
                 </li>
@@ -140,6 +173,8 @@ session_start();
         <div class="row">
           <div class="col-md-12 text-white">
             <h4>Notes</h4>
+            <hr class="mb-3">
+            <p><?php echo $username ."'s notes:" ?></p>
           </div>
         </div>
         <div class="row">
@@ -156,22 +191,13 @@ session_start();
                     style="width: 100%">
                     <thead>
                       <tr>
-                        <th>Name</th>
-                        <th>Position</th>
-                        <th>Office</th>
-                        <th>Age</th>
-                        <th>Start date</th>
-                        <th>Salary</th>
-                      </tr>
+                        <th>Notes</th>
                     </thead>
                     <tbody>
                       <tr>
-                        <td>Tiger Nixon</td>
-                        <td>System Architect</td>
-                        <td>Edinburgh</td>
-                        <td>61</td>
-                        <td>2011/04/25</td>
-                        <td>$320,800</td>
+                        <td>
+                          <?php if(isset($error)){echo $error;} 
+                                if(isset($succ)){echo $dec_notes;}  ?></td>
                       </tr>
                     </tbody>
                   </table>

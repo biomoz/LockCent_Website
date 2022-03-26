@@ -1,7 +1,7 @@
 <?php 
 
 session_start();
-
+require_once('../useraccounts-master/config.php');
 	if(!isset($_SESSION['userlogin'])){
 		header("Location: login.php");
 	}
@@ -11,6 +11,41 @@ session_start();
 		unset($_SESSION);
 		header("Location: ../useraccounts-master/login.php");
 	}
+  $username= $_SESSION['username'];
+  $sql = "SELECT username, ekey FROM user_accounts WHERE username='$username'";
+  $result = $db->query($sql);
+  
+  
+  if ($result->rowCount() > 0) {
+    // output data of each row
+    while($row = $result->fetch(PDO::FETCH_ASSOC)) {
+   
+    $enc_ekey= (binary)$row["ekey"];
+
+  
+    }
+  } else {
+    echo "0 results";
+  }
+
+  $sql = "SELECT username, passwords FROM user_data WHERE username='$username'";
+  $result = $db->query($sql);
+  
+  if ($result->rowCount() > 0) {
+    // output data of each row
+    while($row = $result->fetch(PDO::FETCH_ASSOC)) {
+   
+    $passwords = $row["passwords"];
+    $method = 'aes-256-cbc';
+    $iv = chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0);
+    $dec_passwords = openssl_decrypt(base64_decode($passwords), $method, $enc_ekey, OPENSSL_RAW_DATA, $iv);
+    $jpasswords = json_decode($dec_passwords); 
+      $succ=1;
+    }
+  } else {
+     $error = '0 results';
+  }
+	
 
 ?>
 
@@ -78,7 +113,7 @@ session_start();
                 My Account
               </a>
               <ul class="dropdown-menu dropdown-menu-end">
-                <li><a class="dropdown-item" href="#">Settings</a></li>
+                <li><a class="dropdown-item" href="settings.php">Settings</a></li>
                 <li><a class="dropdown-item" href="index.php?logout=true">Logout</a></li>
                 <li>
                 </li>
@@ -134,12 +169,20 @@ session_start();
       </div>
     </div>
     <!-- offcanvas -->
+    <php?
+
+
+
+
+    ?>
     <main class="mt-5 pt-3">
       <div class="container-fluid">
         <br><br>
         <div class="row">
           <div class="col-md-12 text-white">
             <h4>Passwords</h4>
+            <hr class="mb-3">
+            <p><?php echo $username ."'s passwords:" ?></p>
           </div>
         </div>
         <div class="row">
@@ -157,22 +200,17 @@ session_start();
                     <thead>
                       <tr>
                         <th>Name</th>
-                        <th>Position</th>
-                        <th>Office</th>
-                        <th>Age</th>
-                        <th>Start date</th>
-                        <th>Salary</th>
+                        <th>Password</th>
                       </tr>
                     </thead>
                     <tbody>
-                      <tr>
-                        <td>Tiger Nixon</td>
-                        <td>System Architect</td>
-                        <td>Edinburgh</td>
-                        <td>61</td>
-                        <td>2011/04/25</td>
-                        <td>$320,800</td>
+                    <?php if(isset($error)){echo '<td>'.$error.'</td><td>'.$error.'</td>';} ?>
+                    <?php if(isset($succ)){foreach ($jpasswords as $password) { ?>
+				              <tr>
+					              <td> <?= $password->Name; ?> </td>
+                        <td> <?= $password->Password; ?> </td>
                       </tr>
+                    <?php }} ?>
                     </tbody>
                   </table>
                 </div>
@@ -190,3 +228,4 @@ session_start();
     <script src="./js/script.js"></script>
   </body>
 </html>
+

@@ -107,13 +107,7 @@
 
 						<label for="password"><b>Password</b></label>
 						<input class="form-control" id="password"  type="password" name="password" required>
-						
-						<div class="form-group">
-						<div class="custom-control custom-checkbox">
-							<input type="checkbox" name="rememberme" class="custom-control-input" id="customControlInline">
-							<label class="custom-control-label" for="customControlInline">Remember me</label>
-						</div>
-					</div>
+
 						<hr class="mb-3">
 						<input class="btn btn-primary" type="submit" id="login" name="create" value="Login">
 					</div>

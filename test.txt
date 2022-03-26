@@ -566,3 +566,11 @@ old nav:
       </div>
     </nav>
      
+
+	 $db->beginTransaction();
+      $st = $db->prepare("DELETE FROM user_accounts WHERE username = '$username'");
+      $st->execute(array(':username', $username));
+      $st = $db->prepare("DELETE FROM user_data WHERE username = '$username'");
+      $st->execute(array(':username', $username));
+      $pdo->commit();
+	  

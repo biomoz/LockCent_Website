@@ -48,14 +48,14 @@ require_once('config.php');
 				$result = $stmtinsert->execute();
 
 				if($result){
-				echo 'Successfully saved.';
+          $msg = 'Successful!';
 				}else{
-				echo 'Failed.';
+          $error = 'Failed.';
 				}
 
 			}
 			else {
-				echo "Failed. Password doesn't match.";
+				$error1 = "Failed.Password doesn't match.";
 			}
 			
 			}
@@ -159,6 +159,9 @@ require_once('config.php');
 						<input class="form-control" id="re-password"  type="password" name="re-password" required>
 
 						<hr class="mb-3">
+            <?php if(isset($error)){echo '<p class="alert-danger rounded p-3">'.$error.'</p>';}?>
+            <?php if(isset($error1)){echo '<p class="alert-danger rounded p-3">'.$error1.'</p>';}?>
+            <?php if(isset($msg)){echo '<p class="alert-success rounded p-3">'.$msg.'</p>';}?>
 						<input class="btn btn-primary" type="submit" id="register" name="create" value="Sign Up">
 					</div>
 				</div>

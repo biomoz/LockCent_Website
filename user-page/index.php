@@ -3,7 +3,7 @@
 session_start();
 
 	if(!isset($_SESSION['userlogin'])){
-		header("Location: login.php");
+		header("Location: ../useraccounts-master/login.php");
 	}
 
 	if(isset($_GET['logout'])){
@@ -11,7 +11,7 @@ session_start();
 		unset($_SESSION);
 		header("Location: ../useraccounts-master/login.php");
 	}
-
+  
 ?>
 
 <!DOCTYPE html>
@@ -78,7 +78,7 @@ session_start();
                 My Account
               </a>
               <ul class="dropdown-menu dropdown-menu-end">
-                <li><a class="dropdown-item" href="#">Settings</a></li>
+                <li><a class="dropdown-item" href="settings.php">Settings</a></li>
                 <li><a class="dropdown-item" href="index.php?logout=true">Logout</a></li>
                 <li>
                 </li>
@@ -140,6 +140,8 @@ session_start();
         <div class="row">
           <div class="col-md-12 text-white">
             <h4>Dashboard</h4>
+            <hr class="mb-3">
+            <p><?php echo "Welcome ".$_SESSION['username'] ?></p>
           </div>
         </div>
         <a href="passwords.php"> <div class="col-md-3 mb-3">
