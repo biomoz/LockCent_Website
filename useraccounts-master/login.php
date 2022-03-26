@@ -107,9 +107,9 @@
 
 						<label for="password"><b>Password</b></label>
 						<input class="form-control" id="password"  type="password" name="password" required>
-
+                        
 						<hr class="mb-3">
-						<input class="btn btn-primary" type="submit" id="login" name="create" value="Login">
+						<input class="btn btn-primary" type="submit" id="login" name="login" value="Login">
 					</div>
 				</div>
 				<div class="mt-4">
