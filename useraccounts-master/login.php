@@ -107,7 +107,7 @@
 
 						<label for="password"><b>Password</b></label>
 						<input class="form-control" id="password"  type="password" name="password" required>
-                        
+
 						<hr class="mb-3">
 						<input class="btn btn-primary" type="submit" id="login" name="login" value="Login">
 					</div>
@@ -123,7 +123,7 @@
 			</div>
 		</form>
 	</div>
-<script src="http://code.jquery.com/jquery-3.3.1.min.js"
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"
 			  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
 			  crossorigin="anonymous"></script>
 <script type="text/javascript" src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
