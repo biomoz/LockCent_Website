@@ -62,7 +62,7 @@ session_start();
       
       if ($result->rowCount() > 0) {
         // output data of each row
-        while($row = $result->fetch(PDO::FETCH_ASSOC)) {
+        if($row = $result->fetch(PDO::FETCH_ASSOC)) {
        
         $enc_ekey= (binary)$row["ekey"];
         $email= $row["email"];
@@ -84,10 +84,6 @@ session_start();
 
           if ($_POST['n_password'] === $_POST['re-n_password']) {
             $method = 'aes-256-cbc';
-            $string = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-            $ekey= substr(str_shuffle($string),0,32);
-            $enc_ekey = substr(hash('sha256', $ekey, true), 0, 32);
-    
             $iv = chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0);
     
             $password = $_POST['n_password'];
@@ -98,9 +94,9 @@ session_start();
             $enc_pass = base64_encode(openssl_encrypt($password, $method, $enc_ekey, OPENSSL_RAW_DATA, $iv));
             $dec_pass = openssl_decrypt(base64_decode($enc_pass), $method, $enc_ekey, OPENSSL_RAW_DATA, $iv);
           
-            $sql ="UPDATE user_accounts SET password =?, ekey =? WHERE username='$username'";
+            $sql ="UPDATE user_accounts SET password =? WHERE username='$username'";
             $stmtselect  = $db->prepare($sql);
-            $result = $stmtselect->execute([$enc_pass, $enc_ekey]);
+            $result = $stmtselect->execute([$enc_pass]);
 
             if($result){
               $msg = 'Successfully updated your password!';
