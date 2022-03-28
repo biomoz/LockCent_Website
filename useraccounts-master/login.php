@@ -93,7 +93,7 @@
     </nav>
     <div style="max-height: 100%; max-width:80%; margin: 0 auto; padding: 10px; background-color: rgba(150, 147, 147, 0.5);">
       <br><br><br>
-		<form action="registration.php" method="post">
+		<form method="POST" action="#">
 			<div class="container">
 				
 				<div class="row">
@@ -142,10 +142,12 @@
 				url: 'jslogin.php',
 				data:  {username: username, password: password},
 				success: function(data){
-					alert(data);
 					if($.trim(data) === "Succesfull"){
 						setTimeout(' window.location.href =  "../user-page/index.php"', 10);
 					}
+          else {
+            alert(data);
+          }
 				},
 				error: function(data){
 					alert('The username or password is incorrect');

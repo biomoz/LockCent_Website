@@ -115,22 +115,8 @@ session_start();
         $error2 = 'There were errors while connecting to database.';
       }
 			
-			}
-      if(isset($_POST['delete'])){
-      
-        $result= $db->prepare("DELETE FROM user_accounts WHERE username=?")->execute([$username]);
-        $result= $db->prepare("DELETE FROM user_data WHERE username=?")->execute([$username]);
-            // execute the statement
-            if ($result) {
-                $succ = 'Succesful.';
-                session_destroy();
-		            unset($_SESSION);
-		            header("Location: ../useraccounts-master/login.php");
-            }else{
-              $error4 = 'Failed.';
-            }
-      }
-
+		}
+ 
 		?>	
 	</div>
 
@@ -246,7 +232,7 @@ session_start();
           <div class="col-md-12 text-white">
             <h4>Settings</h4>
             <hr class="mb-3">
-            <p><?php echo $_SESSION['username']."'s settings" ?></p>
+            <p><?php echo $username."'s settings" ?></p>
           </div>
         </div>
         <form action="#" method="post"> 
@@ -272,15 +258,14 @@ session_start();
             </div>
           </div>
 		    </form>
-        <form action="#" method="post"> 
+        <form action="delete.php" method="post" onsubmit="return confirm('Are you sure to delete your account?');"> 
           <div class="row">
             <div class="col-sm-5" style="color: white;">
               <br>
               <h5>Delete Account</h5>
               <hr class="mb-3">
-              <?php if(isset($error3)){echo '<p class="alert-danger rounded p-3">'.$error3.'</p>';}?>
-              <?php if(isset($succ)){echo '<p class="alert-success rounded p-3">'.$succ.'</p>';}?>
-              <input class="btn btn-danger" type="submit" id="delete" name="delete" value="Delete">
+              <input type="hidden" name="username" value="<?php echo $username ?>" />
+              <input class="btn btn-danger remove-record" type="submit" id="delete" name="delete" value="Delete">
             </div>
           </div>
 		    </form>
