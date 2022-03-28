@@ -573,4 +573,21 @@ old nav:
       $st = $db->prepare("DELETE FROM user_data WHERE username = '$username'");
       $st->execute(array(':username', $username));
       $pdo->commit();
-	  
+
+
+delete function:
+
+if(isset($_POST['delete'])){
+      
+      $result= $db->prepare("DELETE FROM user_accounts WHERE username=?")->execute([$username]);
+      $result= $db->prepare("DELETE FROM user_data WHERE username=?")->execute([$username]);
+          // execute the statement
+          if ($result) {
+              $succ = 'Succesful.';
+              session_destroy();
+                  unset($_SESSION);
+                  header("Location: ../useraccounts-master/login.php");
+          }else{
+            $error4 = 'Failed.';
+          }
+    }
