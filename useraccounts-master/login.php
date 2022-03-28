@@ -115,10 +115,7 @@
 				<div class="mt-4">
 				<div class="d-flex links">
 					Don't have an account? -><a href="registration.php" class="ml-2">Sign Up</a>
-				</div>
-				<div class="d-flex">
-					<a href="#">Forgot your password?</a>
-				</div>
+				</div>	
 			</div>
 			</div>
 		</form>

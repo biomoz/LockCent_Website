@@ -573,4 +573,9 @@ old nav:
       $st = $db->prepare("DELETE FROM user_data WHERE username = '$username'");
       $st->execute(array(':username', $username));
       $pdo->commit();
-	  
+	
+forgot password: 
+
+	<div class="d-flex">
+	<a href="#">Forgot your password?</a>
+	</div>
