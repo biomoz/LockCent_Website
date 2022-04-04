@@ -15,35 +15,82 @@ require_once('../useraccounts-master/config.php');
   $sql = "SELECT username, ekey FROM user_accounts WHERE username='$username'";
   $result = $db->query($sql);
   
-  
-  if ($result->rowCount() > 0) {
-    // output data of each row
-    while($row = $result->fetch(PDO::FETCH_ASSOC)) {
+  $row = $result->fetch(PDO::FETCH_ASSOC);
    
-    $enc_ekey= (binary)$row["ekey"];
+  $enc_ekey= (binary)$row["ekey"];
 
-  
-    }
-  } else {
-    echo "0 results";
-  }
 
   $sql = "SELECT username, notes FROM user_data WHERE username='$username'";
   $result = $db->query($sql);
   
   if ($result->rowCount() > 0) {
     // output data of each row
-    while($row = $result->fetch(PDO::FETCH_ASSOC)) {
-   
+    $row = $result->fetch(PDO::FETCH_ASSOC);
     $notes = $row["notes"];
     $method = 'aes-256-cbc';
     $iv = chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0);
     $dec_notes = openssl_decrypt(base64_decode($notes), $method, $enc_ekey, OPENSSL_RAW_DATA, $iv);
+    if($dec_notes==0){
+      $error = '0 results';
+    }else{
     $succ=1;
     }
-  } else {
-    $error = '0 results';
+    }
+  else {
+    $error ='0 results';
   }
+
+  if(isset($_POST['addtxt'])){
+    $method = 'aes-256-cbc';
+    $iv = chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0);
+    
+     $n_notes = $_POST['addtext'];
+      
+       $sql = "SELECT username, passwords FROM user_data WHERE username='$username'";
+       $result = $db->query($sql);
+       
+       if ($result->rowCount() > 0) {
+        
+         $row = $result->fetch(PDO::FETCH_ASSOC);
+         $enc_passwords = $row["passwords"];}
+         else{
+          $enc_passwords=0;
+         }
+
+       if ($enc_passwords==0){
+       $dec_passwords = "0 results";
+       $enc_passwords = base64_encode(openssl_encrypt($dec_passwords, $method, $enc_ekey, OPENSSL_RAW_DATA, $iv));
+
+
+       $dec_notes =  $n_notes;
+       $notes = base64_encode(openssl_encrypt($dec_notes, $method, $enc_ekey, OPENSSL_RAW_DATA, $iv));
+
+       $sql ="INSERT INTO user_data (username, passwords, notes ) VALUES(:username,:passwords, :notes)";	
+
+       $stmtinsert = $db->prepare($sql);
+       $stmtinsert->bindParam(':username', $username);
+       $stmtinsert->bindParam(':passwords', $enc_passwords);
+       $stmtinsert->bindParam(':notes', $notes);
+       $stmtinsert->execute();
+       }
+       else{
+        
+        $n_notes = $_POST['addtext'];                
+        $dec_notes =  $n_notes;
+        $notes = base64_encode(openssl_encrypt($dec_notes, $method, $enc_ekey, OPENSSL_RAW_DATA, $iv));
+
+         $sql ="UPDATE user_data SET notes =? WHERE username='$username'";
+         $stmtselect  = $db->prepare($sql);
+         $stmtselect->execute([$notes]);
+
+       }
+       $URL="#";
+       echo "<script type='text/javascript'>document.location.href='{$URL}';</script>";
+       echo '<META HTTP-EQUIV="refresh" content="0;URL=' . $URL . '">';
+      
+      }
+          
+
 
 ?>
 
@@ -179,31 +226,36 @@ require_once('../useraccounts-master/config.php');
         </div>
         <div class="row">
           <div class="col-md-12 mb-3">
+            <form action="notes.php" name="notes" method="post">
             <div class="card">
               <div class="card-header text-black">
-                <span><i class="bi bi-table me-2"></i></span> Data Table
+                <span><i class="bi bi-table me-2"></i></span> Notes
               </div>
               <div class="card-body">
                 <div class="table-responsive">
                   <table
                     id="example"
-                    class="table table-striped data-table"
+                    class="table table-striped"
                     style="width: 100%">
-                    <thead>
-                      <tr>
-                        <th>Notes</th>
-                    </thead>
                     <tbody>
-                      <tr>
-                        <td>
-                          <?php if(isset($error)){echo $error;} 
-                                if(isset($succ)){echo $dec_notes;}  ?></td>
-                      </tr>
-                    </tbody>
+                    <div class="form-group">
+                    <textarea class="form-control" 
+                        id="addtext" name="addtext" rows="15"> <?php if(isset($error)){echo $error;} 
+                                if(isset($succ)){echo $dec_notes;}  ?></textarea>
+                    </textarea>
+                    </div>
+                    </tbody>     
+                    <input type="hidden" name="username" value="<?php echo $username ?>" />
+                    <br>
+                  <input class="btn btn-primary" type="submit" id="addtxt" name="addtxt" value="Save Note">
                   </table>
                 </div>
               </div>
             </div>
+            </form>
+               
+            </div>
+        </div>
           </div>
         </div>
       </div>
