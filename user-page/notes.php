@@ -65,13 +65,13 @@ require_once('../useraccounts-master/config.php');
        $dec_notes =  $n_notes;
        $notes = base64_encode(openssl_encrypt($dec_notes, $method, $enc_ekey, OPENSSL_RAW_DATA, $iv));
 
-       $sql ="INSERT INTO user_data (username, passwords, notes ) VALUES(:username,:passwords, :notes)";	
+       $sql ="INSERT INTO user_data (username, passwords, notes ) VALUES(:username,:passwords,:notes)";	
 
        $stmtinsert = $db->prepare($sql);
        $stmtinsert->bindParam(':username', $username);
        $stmtinsert->bindParam(':passwords', $enc_passwords);
        $stmtinsert->bindParam(':notes', $notes);
-       $stmtinsert->execute();
+       $result=$stmtinsert->execute();
        }
        else{
         
@@ -81,13 +81,16 @@ require_once('../useraccounts-master/config.php');
 
          $sql ="UPDATE user_data SET notes =? WHERE username='$username'";
          $stmtselect  = $db->prepare($sql);
-         $stmtselect->execute([$notes]);
+         $result=$stmtselect->execute([$notes]);
 
        }
-       $URL="#";
-       echo "<script type='text/javascript'>document.location.href='{$URL}';</script>";
-       echo '<META HTTP-EQUIV="refresh" content="0;URL=' . $URL . '">';
-      
+       if($result){
+        $msg = 'Successful!';
+      }else{
+        $error = 'Failed.';
+      }
+       header("Refresh:0");
+
       }
           
 
@@ -240,13 +243,14 @@ require_once('../useraccounts-master/config.php');
                     <tbody>
                     <div class="form-group">
                     <textarea class="form-control" 
-                        id="addtext" name="addtext" rows="15"> <?php if(isset($error)){echo $error;} 
-                                if(isset($succ)){echo $dec_notes;}  ?></textarea>
+                        id="addtext" name="addtext" rows="15"><?php if(isset($error)){echo $error;} if(isset($succ)){echo $dec_notes;}?></textarea>
                     </textarea>
                     </div>
                     </tbody>     
                     <input type="hidden" name="username" value="<?php echo $username ?>" />
-                    <br>
+                    <hr class="mb-1">
+                  <?php if(isset($error)){echo '<p class="alert-danger rounded p-3">'.$error.'</p>';}?>
+                  <?php if(isset($msg)){echo '<p class="alert-success rounded p-3">'.$msg.'</p>';}?>
                   <input class="btn btn-primary" type="submit" id="addtxt" name="addtxt" value="Save Note">
                   </table>
                 </div>
