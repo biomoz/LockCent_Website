@@ -30,7 +30,7 @@ require_once('../useraccounts-master/config.php');
     $method = 'aes-256-cbc';
     $iv = chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0);
     $dec_notes = openssl_decrypt(base64_decode($notes), $method, $enc_ekey, OPENSSL_RAW_DATA, $iv);
-    if($dec_notes==0){
+    if($dec_notes===0){
       $error = '0 results';
     }else{
     $succ=1;
@@ -57,7 +57,7 @@ require_once('../useraccounts-master/config.php');
           $enc_passwords=0;
          }
 
-       if ($enc_passwords==0){
+       if ($enc_passwords===0){
        $dec_passwords = "0 results";
        $enc_passwords = base64_encode(openssl_encrypt($dec_passwords, $method, $enc_ekey, OPENSSL_RAW_DATA, $iv));
 
