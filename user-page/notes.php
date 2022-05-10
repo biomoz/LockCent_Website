@@ -19,27 +19,6 @@ require_once('../useraccounts-master/config.php');
    
   $enc_ekey= (binary)$row["ekey"];
 
-
-  $sql = "SELECT username, notes FROM user_data WHERE username='$username'";
-  $result = $db->query($sql);
-  
-  if ($result->rowCount() > 0) {
-    // output data of each row
-    $row = $result->fetch(PDO::FETCH_ASSOC);
-    $notes = $row["notes"];
-    $method = 'aes-256-cbc';
-    $iv = chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0);
-    $dec_notes = openssl_decrypt(base64_decode($notes), $method, $enc_ekey, OPENSSL_RAW_DATA, $iv);
-    if($dec_notes===0){
-      $error = '0 results';
-    }else{
-    $succ=1;
-    }
-    }
-  else {
-    $error ='0 results';
-  }
-
   if(isset($_POST['addtxt'])){
     $method = 'aes-256-cbc';
     $iv = chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0);
@@ -92,7 +71,17 @@ require_once('../useraccounts-master/config.php');
        header("Refresh:0");
 
       }
-          
+
+      //API
+      $link_a = "http://localhost/LockCent_Website/user-page/api/apiHandler.php?action=outputData&username=$username";
+
+      $client = curl_init("http://localhost/LockCent_Website/user-page/api/apiHandler.php?action=outputData&username=$username");
+      curl_setopt($client, CURLOPT_RETURNTRANSFER, 1);
+      $response = curl_exec($client);
+      $output = '';
+      $output .= $response;
+
+
 
 
 ?>
@@ -109,8 +98,7 @@ require_once('../useraccounts-master/config.php');
       href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css"
     />
     <link rel="stylesheet" href="css/dataTables.bootstrap5.min.css" />
-    <link rel="stylesheet" href="css/style.css" />
-    
+    <link rel="stylesheet" href="css/style.css" />    
     <title>LockCent | User</title>
   </head>
   <body>
@@ -224,7 +212,7 @@ require_once('../useraccounts-master/config.php');
           <div class="col-md-12 text-white">
             <h4>Notes</h4>
             <hr class="mb-3">
-            <p><?php echo $username ."'s notes:" ?></p>
+            <p><?php echo $username ."'s notes:" ;?></p>
           </div>
         </div>
         <div class="row">
@@ -243,7 +231,7 @@ require_once('../useraccounts-master/config.php');
                     <tbody>
                     <div class="form-group">
                     <textarea class="form-control" 
-                        id="addtext" name="addtext" rows="15"><?php if(isset($error)){echo $error;} if(isset($succ)){echo $dec_notes;}?></textarea>
+                        id="addtext" name="addtext" rows="15"><?php echo $output ?></textarea>
                     </textarea>
                     </div>
                     </tbody>     
