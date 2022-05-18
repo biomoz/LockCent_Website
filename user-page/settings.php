@@ -14,6 +14,72 @@ session_start();
 		header("Location: ../useraccounts-master/login.php");
 	}
 
+  require_once('../useraccounts-master/config.php');
+  $username = $_SESSION['username'];
+  
+  if(isset($_POST['submit'])){
+    
+    
+    $sql = "SELECT username, ekey, email FROM user_accounts WHERE username='$username'";
+    $result = $db->query($sql);
+    
+    if ($result->rowCount() > 0) {
+      // output data of each row
+      if($row = $result->fetch(PDO::FETCH_ASSOC)) {
+     
+      $enc_ekey= (binary)$row["ekey"];
+      $email= $row["email"];
+      }
+    } 
+    
+    $iv = chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0);
+    $method = 'aes-256-cbc';
+    
+    $password = base64_encode(openssl_encrypt($_POST['c_password'], $method, $enc_ekey, OPENSSL_RAW_DATA, $iv));
+    
+    $sql = "SELECT * FROM user_accounts WHERE username = '$username' AND password = ? LIMIT 1";
+    $stmtselect  = $db->prepare($sql);
+    $result = $stmtselect->execute([$password]);
+    
+    if($result){
+      $user = $stmtselect->fetch(PDO::FETCH_ASSOC);
+      if($stmtselect->rowCount() > 0){
+
+        if ($_POST['n_password'] === $_POST['re-n_password']) {
+          $method = 'aes-256-cbc';
+          $iv = chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0);
+  
+          $password = $_POST['n_password'];
+  
+          $enc_email = base64_encode(openssl_encrypt($email, $method, $enc_ekey, OPENSSL_RAW_DATA, $iv));
+          $dec_email = openssl_decrypt(base64_decode($enc_email), $method, $enc_ekey, OPENSSL_RAW_DATA, $iv);
+
+          $enc_pass = base64_encode(openssl_encrypt($password, $method, $enc_ekey, OPENSSL_RAW_DATA, $iv));
+          $dec_pass = openssl_decrypt(base64_decode($enc_pass), $method, $enc_ekey, OPENSSL_RAW_DATA, $iv);
+        
+          $sql ="UPDATE user_accounts SET password =? WHERE username='$username'";
+          $stmtselect  = $db->prepare($sql);
+          $result = $stmtselect->execute([$enc_pass]);
+
+          if($result){
+            $msg = 'Successfully updated your password!';
+
+          }
+  
+        }
+        else {
+          $error = 'Passwords do not match!';
+        }
+        
+      }else{
+        $error1 = 'Failed.';		
+      }
+    }else{
+      $error2 = 'There were errors while connecting to database.';
+    }
+    
+  }
+
 ?>
 
 <!DOCTYPE html>
@@ -22,103 +88,17 @@ session_start();
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="css/bootstrap.min.css" />
+    <link rel="stylesheet" href="../css/bootstrap.min.css" />
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css"
     />
-    <link rel="stylesheet" href="css/dataTables.bootstrap5.min.css" />
-    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="../css/dataTables.bootstrap5.min.css" />
+    <link rel="stylesheet" href="../css/style.css" />
     
-    <title>LockCent | User</title>
+    <title>LockCent | Settings</title>
   </head>
   <body>
-    <!-- top navigation bar -->
-    <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="css/bootstrap.min.css" />
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css"
-    />
-    <link rel="stylesheet" href="css/dataTables.bootstrap5.min.css" />
-    <link rel="stylesheet" href="css/style.css" />
-    
-    <title>LockCent | User</title>
-  </head>
-  <body>
-  <div>
-		<?php
-		require_once('../useraccounts-master/config.php');
-    $username = $_SESSION['username'];
-    
-    if(isset($_POST['submit'])){
-      
-      
-      $sql = "SELECT username, ekey, email FROM user_accounts WHERE username='$username'";
-      $result = $db->query($sql);
-      
-      if ($result->rowCount() > 0) {
-        // output data of each row
-        if($row = $result->fetch(PDO::FETCH_ASSOC)) {
-       
-        $enc_ekey= (binary)$row["ekey"];
-        $email= $row["email"];
-        }
-      } 
-      
-      $iv = chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0);
-      $method = 'aes-256-cbc';
-      
-      $password = base64_encode(openssl_encrypt($_POST['c_password'], $method, $enc_ekey, OPENSSL_RAW_DATA, $iv));
-      
-      $sql = "SELECT * FROM user_accounts WHERE username = '$username' AND password = ? LIMIT 1";
-      $stmtselect  = $db->prepare($sql);
-      $result = $stmtselect->execute([$password]);
-      
-      if($result){
-        $user = $stmtselect->fetch(PDO::FETCH_ASSOC);
-        if($stmtselect->rowCount() > 0){
-
-          if ($_POST['n_password'] === $_POST['re-n_password']) {
-            $method = 'aes-256-cbc';
-            $iv = chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0);
-    
-            $password = $_POST['n_password'];
-    
-            $enc_email = base64_encode(openssl_encrypt($email, $method, $enc_ekey, OPENSSL_RAW_DATA, $iv));
-			    	$dec_email = openssl_decrypt(base64_decode($enc_email), $method, $enc_ekey, OPENSSL_RAW_DATA, $iv);
-
-            $enc_pass = base64_encode(openssl_encrypt($password, $method, $enc_ekey, OPENSSL_RAW_DATA, $iv));
-            $dec_pass = openssl_decrypt(base64_decode($enc_pass), $method, $enc_ekey, OPENSSL_RAW_DATA, $iv);
-          
-            $sql ="UPDATE user_accounts SET password =? WHERE username='$username'";
-            $stmtselect  = $db->prepare($sql);
-            $result = $stmtselect->execute([$enc_pass]);
-
-            if($result){
-              $msg = 'Successfully updated your password!';
-
-            }
-    
-          }
-          else {
-            $error = 'Passwords do not match!';
-          }
-          
-        }else{
-          $error1 = 'Failed.';		
-        }
-      }else{
-        $error2 = 'There were errors while connecting to database.';
-      }
-			
-		}
- 
-		?>	
-	</div>
 
 
     <!-- top navigation bar -->
@@ -271,11 +251,6 @@ session_start();
 		    </form>
       </div>
     </main>
-    <script src="./js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.0.2/dist/chart.min.js"></script>
-    <script src="./js/jquery-3.5.1.js"></script>
-    <script src="./js/jquery.dataTables.min.js"></script>
-    <script src="./js/dataTables.bootstrap5.min.js"></script>
-    <script src="./js/script.js"></script>
+    <script src="../js/bootstrap.bundle.min.js"></script>
   </body>
 </html>

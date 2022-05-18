@@ -14,5 +14,3 @@ session_start();
 	}
 
 ?>
-
-<a href="index.php?logout=true">Logout</a>

@@ -42,7 +42,7 @@ button {
 body{
   background-size: 100%;
   background-color: black;
-  background-image: url("../../images/jason-leung.jpg");
+  background-image: url("../images/jason-leung.jpg");
   background-attachment: fixed;
   background-repeat: no-repeat;
 }
