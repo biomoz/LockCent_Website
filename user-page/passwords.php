@@ -225,12 +225,13 @@ require_once('../useraccounts-master/config.php');
                   <hr class="mb-1">
                   <input type="hidden" name="username" value="<?php echo $username ?>" />
                   <input class="btn btn-primary" type="submit" id="add" name="add" value="Add">
-                  <?php if(isset($_POST['add'])){
+                  <?php 
+                  
+                  if(isset($_POST['add'])){
                     
                      $method = 'aes-256-cbc';
                      $iv = chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0) . chr(0x0);
-                    
-                    
+                                     
                      if($counter==0){
                      
                       $p_name = $_POST['p_name'];
@@ -285,7 +286,6 @@ require_once('../useraccounts-master/config.php');
                           $stmtselect->execute([$enc_passwords]);
 
                         }
-
 
                     }else{                    
                           $p_name = $_POST['p_name'];

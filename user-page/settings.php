@@ -1,7 +1,5 @@
 <?php
 
-use LDAP\Result;
-
 session_start();
 
 	if(!isset($_SESSION['userlogin'])){
