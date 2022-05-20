@@ -13,4 +13,5 @@ if(isset($_POST['username'])){
     unset($_SESSION);
     header("Location: ../useraccounts-master/login.php");
 }
-    
+
+?>
